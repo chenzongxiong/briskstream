@@ -55,7 +55,7 @@ public class BriskRunner extends abstractRunner {
     }
 
     public static void main(String[] args) {
-
+        System.out.println("==================== Run BriskStream ====================");
         BriskRunner runner = new BriskRunner();
         JCommander cmd = new JCommander(runner);
 

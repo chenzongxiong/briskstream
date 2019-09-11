@@ -13,6 +13,7 @@ import brisk.execution.runtime.tuple.impl.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import brisk.components.operators.api.BaseOperator;
+import brisk.execution.runtime.tuple.impl.OutputFieldsDeclarer;
 
 import java.util.HashMap;
 
@@ -73,31 +74,31 @@ public class DeserializeBolt extends splitBolt {
         // }
     }
 
-    public void execute(TransferTuple in) throws InterruptedException {
-//		final long bid = in.getBID();
-        // int bound = in.length;
-        // for (int i = 0; i < bound; i++) {
+//     public void execute(TransferTuple in) throws InterruptedException {
+// //		final long bid = in.getBID();
+//         // int bound = in.length;
+//         // for (int i = 0; i < bound; i++) {
 
-//			char[] value_list = in.getCharArray(0, i);
-//			int index = 0;
-//			int length = value_list.length;
-//			for (int c = 0; c < length; c++) {
-//				if (value_list[c] == ',' || c == length - 1) {//double measure_end.
-//					int len = c - index;
-//					char[] word = new char[len];
-//					System.arraycopy(value_list, index, word, 0, len);
-//					collector.emit(word);
-//					index = c + 1;
-//				}
-//			}
+// //			char[] value_list = in.getCharArray(0, i);
+// //			int index = 0;
+// //			int length = value_list.length;
+// //			for (int c = 0; c < length; c++) {
+// //				if (value_list[c] == ',' || c == length - 1) {//double measure_end.
+// //					int len = c - index;
+// //					char[] word = new char[len];
+// //					System.arraycopy(value_list, index, word, 0, len);
+// //					collector.emit(word);
+// //					index = c + 1;
+// //				}
+// //			}
 
-            // char[] value = in.getCharArray(0, i);
-            // String[] split = new String(value).split(",");
-            // for (String word : split) {
-            //     collector.emit(-1, word.toCharArray());
-            // }
-//        }
-    }
+//             // char[] value = in.getCharArray(0, i);
+//             // String[] split = new String(value).split(",");
+//             // for (String word : split) {
+//             //     collector.emit(-1, word.toCharArray());
+//             // }
+// //        }
+//     }
 
     public void profile_execute(TransferTuple in) throws InterruptedException {
 //		final long bid = in.getBID();
@@ -126,4 +127,10 @@ public class DeserializeBolt extends splitBolt {
 
         }
     }
+
+    @Override
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        declarer.declare(new Fields("user_id", "page_id", "ad_id", "ad_type", "event_type", "event_time", "ip_address"));
+    }
+
 }

@@ -15,7 +15,7 @@ public class NullSink extends BaseSink {
     private static final long serialVersionUID = 6394306020203560180L;
     private stable_sink_helper helper;
 
-    private NullSink() {
+    public NullSink() {
         super(LOG);
     }
 

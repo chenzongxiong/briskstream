@@ -1,10 +1,12 @@
 package applications.topology;
 
-import applications.bolts.comm.StringParserBolt;
+// import applications.bolts.comm.StringParserBolt;
 // import applications.bolts.wc.SplitSentenceBolt;
 // import applications.bolts.wc.WordCountBolt;
-// import applications.bolts.ysb.DeserialzeBolt;
-
+import applications.bolts.ysb.DeserializeBolt;
+import applications.bolts.ysb.EventFilterBolt;
+import applications.bolts.ysb.YSBMemFileSpout;
+import applications.bolts.ysb.YSBSink;
 // import applications.constants.WordCountConstants;
 // import applications.constants.WordCountConstants.Component;
 // import applications.constants.WordCountConstants.Field;
@@ -42,32 +44,53 @@ public class YSB extends BasicTopology {
     }
 
     public void initialize() {
-        super.initialize();
-        sink = loadSink();
+        // super.initialize();
+        // sink = loadSink();
+        loadSpout();
+        // initilize_parser();
+        loadSink();
+
     }
 
     @Override
     protected AbstractSpout loadSpout() {
-        return null;
+        if (spout == null) {
+            spout = new YSBMemFileSpout();
+        }
+        return (AbstractSpout) spout;
     }
 
     @Override
     protected BaseSink loadSink() {
-        return null;
+        if (sink == null) {
+            sink = new YSBSink();
+        }
+        return (BaseSink) sink;
     }
+
+    // @Override
+    // protected void initialize_parser() {
+    //     // if (parser == null) {
+    //     //     parser = (Parser)(new DeserializeBolt());
+    //     // }
+    // }
 
     @Override
     public Topology buildTopology() {
 
-        // try {
+        try {
+            builder.setSpout("ysbSpout", spout, 1);
+
+            builder.setSink("ysbSink", sink, 1);
+
         //     // spout.setFields(new Fields(Field.TEXT));
         //     // builder.setSpout(Component.SPOUT, spout, 1);
 
         //     // builder.setSpout("ads", kafkaSpout, kafkaPartitions);
-        // } catch (InvalidIDException e) {
-        //     e.printStackTrace();
-        // }
-        // builder.setGlobalScheduler(new SequentialScheduler());
+        } catch (InvalidIDException e) {
+            e.printStackTrace();
+        }
+        builder.setGlobalScheduler(new SequentialScheduler());
         return builder.createTopology();
     }
 

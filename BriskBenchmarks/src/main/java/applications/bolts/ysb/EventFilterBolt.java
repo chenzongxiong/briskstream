@@ -13,7 +13,7 @@ import brisk.execution.runtime.tuple.impl.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import brisk.components.operators.api.BaseOperator;
-
+import brisk.execution.runtime.tuple.impl.OutputFieldsDeclarer;
 import java.util.HashMap;
 
 //import static Brisk.utils.Utils.printAddresses;

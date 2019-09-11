@@ -25,7 +25,7 @@ public abstract class AbstractTopology {
         return topologyName;
     }
 
-    AbstractSpout loadSpout() {
+    protected AbstractSpout loadSpout() {
         return loadSpout(BaseConstants.BaseConf.SPOUT_CLASS, getConfigPrefix());
     }
 

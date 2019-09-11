@@ -52,6 +52,8 @@ public class BriskRunner extends abstractRunner {
         driver.addApp("WordCount_latency", WordCount_latency.class);
         driver.addApp("LinearRoad_latency", LinearRoad_latency.class);//
 
+        // add YSB
+        driver.addApp("YSB", YSB.class);
     }
 
     public static void main(String[] args) {
@@ -331,6 +333,11 @@ public class BriskRunner extends abstractRunner {
                     config.put(LinearRoadConstants.Conf.LatestAverageVelocityThreads, threads);
                     break;
                 }
+            case "YSB": {
+                System.out.println("[DBG] Run YSB app");
+                break;
+            }
+
             }
             Constants.default_sourceRate = config.getInt("targetHz");
         } else {

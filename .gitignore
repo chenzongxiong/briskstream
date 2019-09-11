@@ -251,3 +251,7 @@ BriskBenchmarks/target/
 Database/target/
 CEP/target/
 affinity/target/
+
+*.o
+*.so*
+*.class

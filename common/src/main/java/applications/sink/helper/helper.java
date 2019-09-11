@@ -59,9 +59,11 @@ public abstract class helper {
         measure_interval = 1 * 1E9;//per 1 second
         measure_times = (int) (duration / measure_interval);
         warm_up = 2 * 1E9;//warm up 1 seconds.
-        this.metric_path = metric_path;
+        // this.metric_path = metric_path;
+        this.metric_path = "/home/zongxiong/briskstream/metric/wc";
         this.throughput_path = metric_path + OsUtils.OS_wrapper("throughput.txt");
         this.sink_path = metric_path + OsUtils.OS_wrapper("sink_threadId.txt");
+        System.out.println("this.throughput.path: " + this.throughput_path + ", sink_path: " + this.sink_path);
 
         atomic_index_e = new AtomicInteger(0);
 //        local_index_e = 0;
@@ -126,6 +128,7 @@ public abstract class helper {
         FileWriter fw;
         BufferedWriter writer = null;
         File file = new File(metric_path);
+
         if (!file.mkdirs()) {
             LOG.warn("Not able to create metrics directories");
         }

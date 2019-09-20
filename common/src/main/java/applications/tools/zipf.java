@@ -34,7 +34,7 @@ public class zipf {
         FileWriter fw = null;
         try {
             // fw = new FileWriter(new File("C://Users//szhang026//Documents//Profile-experiments//TestingData//data//Skew0.dat"));
-            fw = new FileWriter(new File("/home/zongxiong/briskstream/dataset/wordcount/Skew0.dat"));
+            fw = new FileWriter(new File("/home/zxchen/briskstream/dataset/wordcount/Skew0.dat"));
         } catch (IOException e) {
             e.printStackTrace();
         }

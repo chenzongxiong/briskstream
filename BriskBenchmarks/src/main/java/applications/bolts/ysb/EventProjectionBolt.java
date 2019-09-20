@@ -16,15 +16,22 @@ import brisk.components.operators.api.BaseOperator;
 import brisk.execution.runtime.tuple.impl.OutputFieldsDeclarer;
 import java.util.HashMap;
 import applications.bolts.ysb.model.YSBTuple;
+import applications.bolts.ysb.model.YSBOutputTuple;
+
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 //import static Brisk.utils.Utils.printAddresses;
 
-// public class EventFilterBolt extends BaseOperator {
-public class EventFilterBolt extends splitBolt {
-    private static final Logger LOG = LoggerFactory.getLogger(EventFilterBolt.class);
+public class EventProjectionBolt extends splitBolt {
+    private static final Logger LOG = LoggerFactory.getLogger(EventProjectionBolt.class);
     private static final long serialVersionUID = 8089145995668583749L;
 
-    public EventFilterBolt () {
+    private final Map<Integer, Long> counts = new HashMap<>();//what if memory is not enough to hold counts?
+
+    public EventProjectionBolt () {
         super(LOG, new HashMap<>());
         this.output_selectivity.put(BaseConstants.BaseStream.DEFAULT, 10.0);
         OsUtils.configLOG(LOG);
@@ -54,35 +61,20 @@ public class EventFilterBolt extends splitBolt {
 
     @Override
     public void execute(Tuple in) throws InterruptedException {
-        // System.out.println("[DBG] Execute EventFilterBolt");
-//		String value_list = in.getString(0);
-//		String[] split = value_list.split(",");
-//		for (String word : split) {
-//			collector.force_emit(word);
-//		}
-        // char[] value = in.getCharArray(0);
-        // int index = 0;
-        // int length = value.length;
-        // for (int c = 0; c < length; c++) {
-        //     if (value[c] == ',' || c == length - 1) {//double measure_end.
-        //         int len = c - index;
-        //         char[] word = new char[len];
-        //         System.arraycopy(value, index, word, 0, len);
-        //         collector.force_emit(word);
-        //         index = c + 1;
-        //     }
-        // }
     }
 
     public void execute(TransferTuple in) throws InterruptedException {
         int bound = in.length;
-        // System.out.println("[DBG] Execute EventFilterBolt, bound: " + bound);
+        // System.out.println("[DBG] Execute EventProjectionBolt, bound: " + bound);
         for (int i = 0; i < bound; i ++) {
             YSBTuple tuple = (YSBTuple) in.getValue(0, i);
-            // System.out.println("tuple.eventType: " + tuple.eventType.substring(0, 4) + ", equals(view): " + tuple.eventType.substring(0, 4).equals("view") + ", tuple.evetType.length: " + tuple.eventType.length() + ", new String(view).length: " + (new String("view")).length());
-            if (tuple.eventType.substring(0, 4).equals("view")) {
-                collector.emit(1, tuple);
-            }
+            int key = Arrays.hashCode(tuple.campaignId.toCharArray());
+            long v = counts.getOrDefault(key, 0L) + 1;
+
+            counts.put(key, v);
+            // System.out.println("tuple.eventType: " + tuple.eventType + ", count: " + v + ", key: " + key);
+            // System.out.println("count: " + v + ", key: " + key);
+            collector.emit(4, new YSBOutputTuple(tuple.campaignId, tuple.eventTime));
         }
     }
 
@@ -90,7 +82,8 @@ public class EventFilterBolt extends splitBolt {
 //		final long bid = in.getBID();
         int bound = in.length;
         for (int i = 0; i < bound; i++) {
-
+            YSBTuple tuple = (YSBTuple) in.getValue(0, i);
+            System.out.println("tuple.eventType: " + tuple.eventType);
 //			char[] value_list = in.getCharArray(0, i);
 //			int index = 0;
 //			int length = value_list.length;
@@ -115,7 +108,6 @@ public class EventFilterBolt extends splitBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        // declarer.declare(new Fields("user_id", "page_id", "ad_id", "ad_type", "event_type", "event_time", "ip_address"));
-        declarer.declare(new Fields("user_id", "page_id", "campaign_id", "ad_type", "event_type", "event_time", "ip_address"));
+        declarer.declare(new Fields("campaign_id", "event_time"));
     }
 }

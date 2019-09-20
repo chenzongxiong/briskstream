@@ -25,10 +25,18 @@ public class YSBMemFileSpout extends AbstractSpout {
     protected int counter = 0;
     //	String[] array_array;
     char[][] array_array;
+    // char[][] tuples;
+
+    // byte[][] rawTuples;
+    char[][] rawTuples;
+
     private transient BufferedWriter writer;
     private int cnt;
     private int taskId;
-
+    private char [] tuple;
+    private int currentIndex = 0;
+    private int tupleToRead;
+    private int tupleSize;
 
     public YSBMemFileSpout() {
         super(LOG);
@@ -46,54 +54,70 @@ public class YSBMemFileSpout extends AbstractSpout {
         }
     }
 
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    public String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
     @Override
     public void initialize(int thread_Id, int thisTaskId, ExecutionGraph graph) {
         LOG.info("Spout initialize is being called");
-        // long start = System.nanoTime();
-        // cnt = 0;
-        // counter = 0;
-        // taskId = getContext().getThisTaskIndex();//context.getThisTaskId(); start from 0..
+        this.tupleToRead = 100;
+        this.tupleSize = 78;
+        this.currentIndex = 0;
 
-        // // numTasks = config.getInt(getConfigKey(BaseConstants.BaseConf.SPOUT_THREADS));
 
-        // String OS_prefix = null;
+        try {
+            byte[][] _rawTuples = new byte[tupleToRead][tupleSize];
+            String inputFile = "/home/zxchen/inputdata.bin";
+            BufferedInputStream in = new BufferedInputStream(new FileInputStream(inputFile));
+            int flag = -1;
+            for (int i = 0; i < tupleToRead; i ++) {
+                flag = in.read(_rawTuples[i], 0, tupleSize);
+                if (flag == -1)
+                    break;
+            }
+            // System.out.println("tuples[0]: " + bytesToHex(this.rawTuples[0]));
+            // this.rawTuples = new char[tupleToRead][tupleSize];
+            // BufferedReader in = new BufferedReader(new FileReader(inputFile));
+            // int flag = -1;
+            // for (int i = 0; i < tupleToRead; i ++) {
+            //     flag = in.read(this.rawTuples[i], 0, tupleSize);
+            //     if (flag == -1)
+            //         break;
+            // }
+            // for (int j = 0; j < tupleSize; j ++) {
+            //     char ch = this.rawTuples[0][j];
+            //     String hex = String.format("%04x", (int) ch);
+            //     System.out.print(hex + ' ');
+            // }
+            // System.out.println();
 
-        // if (OsUtils.isWindows()) {
-        //     OS_prefix = "win.";
-        // } else {
-        //     OS_prefix = "unix.";
-        // }
-        // String path;
+            // Covert to char array since BriskStream doesn't support byte array
+            this.rawTuples = new char[tupleToRead][tupleSize];
+            for (int i = 0; i < tupleToRead; i ++) {
+                for (int j = 0; j < tupleSize; j ++) {
+                    rawTuples[i][j] = (char)_rawTuples[i][j];
+                }
+            }
 
-        // if (OsUtils.isMac()) {
-        //     path = config.getString(getConfigKey(OS_prefix.concat(BaseConstants.BaseConf.SPOUT_TEST_PATH)));
-        // } else {
-        //     path = config.getString(getConfigKey(OS_prefix.concat(BaseConstants.BaseConf.SPOUT_PATH)));
-        // }
+            for (int j = 0; j < tupleSize; j ++) {
+                char ch = this.rawTuples[2][j];
+                String hex = String.format("%02x", (byte)ch);
+                System.out.print(hex + " ");
+            }
 
-        // String s = System.getProperty("user.home").concat("/data/app/").concat(path);
+            System.out.println();
 
-        // array = new ArrayList<>();
-        // try {
-        //     openFile(s);
-        // } catch (FileNotFoundException e) {
-
-        //     // s = "/data/DATA/tony/data/".concat(path);
-        //     s = "/home/zongxiong/briskstream/dataset/wordcount/Skew0.dat";
-        //     try {
-        //         openFile(s);
-        //     } catch (FileNotFoundException e1) {
-        //         e1.printStackTrace();
-        //     }
-        // }
-        // long pid = OsUtils.getPID(TopologyContext.HPCMonotor);
-        // LOG.info("JVM PID  = " + pid);
-
-        // int end_index = array_array.length * config.getInt("count_number", 1);
-
-        // LOG.info("spout:" + this.taskId + " elements:" + end_index);
-        // long end = System.nanoTime();
-        // LOG.info("spout prepare takes (ms):" + (end - start) / 1E6);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -104,185 +128,12 @@ public class YSBMemFileSpout extends AbstractSpout {
 
     }
 
-    private void build(Scanner scanner) {
-        cnt = 100;
-        if (config.getInt("batch") == -1) {
-            while (scanner.hasNext()) {
-                array.add(scanner.next().toCharArray());//for micro-benchmark only
-            }
-        } else {
-
-            if (!config.getBoolean("microbenchmark")) {//normal case..
-                //&& cnt-- > 0
-                if (OsUtils.isMac()) {
-                    while (scanner.hasNextLine() && cnt-- > 0) { //dummy test purpose..
-                        array.add(scanner.nextLine().toCharArray());
-                    }
-                } else {
-                    while (scanner.hasNextLine()) {
-                        array.add(scanner.nextLine().toCharArray()); //normal..
-                    }
-                }
-
-            } else {
-                int tuple_size = config.getInt("size_tuple");
-                LOG.info("Additional tuple size to emit:" + tuple_size);
-                StringStatesWrapper wrapper = new StringStatesWrapper(tuple_size);
-//                        (StateWrapper<List<StreamValues>>) ClassLoaderUtils.newInstance(parserClass, "wrapper", LOG, tuple_size);
-                if (OsUtils.isWindows()) {
-                    while (scanner.hasNextLine() && cnt-- > 0) { //dummy test purpose..
-                        construction(scanner, wrapper);
-                    }
-                } else {
-                    while (scanner.hasNextLine()) {
-                        construction(scanner, wrapper);
-                    }
-                }
-            }
-        }
-        scanner.close();
-    }
-
-    private void construction(Scanner scanner, StringStatesWrapper wrapper) {
-
-        String splitregex = ",";
-        String[] words = scanner.nextLine().split(splitregex);
-
-        StringBuilder sb = new StringBuilder();
-
-        for (String word : words) {
-            sb.append(word).append(wrapper.getTuple_states()).append(splitregex);
-        }
-
-        array.add(sb.toString().toCharArray());
-
-
-    }
-
-    private void read(String prefix, int i, String postfix) throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File((prefix + i) + "." + postfix), "UTF-8");
-        build(scanner);
-    }
-
-    private void splitRead(String fileName) throws FileNotFoundException {
-        int numSpout = this.getContext().getComponent(taskId).getNumTasks();
-        int range = 10 / numSpout;//original file is split into 10 sub-files.
-        int offset = this.taskId * range + 1;
-        String[] split = fileName.split("\\.");
-        for (int i = offset; i < offset + range; i++) {
-            read(split[0], i, split[1]);
-        }
-
-        if (this.taskId == numSpout - 1) {//if this is the last executor of spout
-            for (int i = offset + range; i <= 10; i++) {
-                read(split[0], i, split[1]);
-            }
-        }
-    }
-
-    private void openFile(String fileName) throws FileNotFoundException {
-        boolean split;
-
-        split = !OsUtils.isMac() && config.getBoolean("split", true);
-
-        if (split) {
-            splitRead(fileName);
-        } else {
-            Scanner scanner = new Scanner(new File(fileName), "UTF-8");
-            build(scanner);
-        }
-
-        array_array = array.toArray(new char[array.size()][]);
-        counter = 0;
-
-//		int bound = 0;
-////		if (OsUtils.isMac()) {
-////			bound = 805872;
-////		} else {
-////			bound = str_l.size();
-////		}
-//
-//		bound = 100;
-//
-//		array = new char[bound][];//str_l.toArray(new String[str_l.size()]);
-//
-//
-
-//		for (int i = 0; i < bound; i++) {
-//			array[i] = str_l.get(i).toCharArray();
-//		}
-//
-
-    }
-
-    private void spout_pid() {
-        RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
-
-        String jvmName = runtimeBean.getName();
-        long pid = Long.valueOf(jvmName.split("@")[0]);
-        LOG.info("JVM PID  = " + pid);
-
-        FileWriter fw;
-        try {
-            fw = new FileWriter(new File(config.getString("metrics.output")
-                    + OsUtils.OS_wrapper("spout_threadId.txt")));
-            writer = new BufferedWriter(fw);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        try {
-            String s_pid = String.valueOf(pid);
-            writer.write(s_pid);
-            writer.flush();
-            //writer.relax_reset();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-//	protected void reset_index() {
-//		if (timestamp_counter == array.length) {
-//			timestamp_counter = 0;
-//		}
-//	}
-
-
-//	int control = 1;
-
-//	volatile String emit;
-
-
     @Override
     public void nextTuple() throws InterruptedException {
-//        String[] value_list = new String[batch];
-//        for (int i = 0; i < batch; i++) {
-//            value_list[i] = array[timestamp_counter];
-//        }
-//
-//		emit = array[timestamp_counter]+"";
-//		if (control > 0) {
-        collector.emit(array_array[counter]);//Arrays.copyOf(array_array[timestamp_counter], array_array[timestamp_counter].length) a workaround to ensure char array instead of string is used in transmission.
-//		collector.emit_nowait(new StreamValues(array[timestamp_counter]));
-        counter++;
-        if (counter == array_array.length) {
-            counter = 0;
+        collector.emit(this.rawTuples[this.currentIndex++]);
+        if (this.currentIndex >= this.tupleToRead) {
+            this.currentIndex = 0;
         }
-//		reset_index();
-//			control--;
-    }
-
-    @Override
-    public void nextTuple_nonblocking() throws InterruptedException {
-
-//		collector.emit(array[timestamp_counter]);//Arrays.copyOf(array[timestamp_counter], array[timestamp_counter].length) a workaround to ensure char array instead of string is used in transmission.
-        collector.emit_nowait(array_array[counter]);
-        counter++;
-        if (counter == array_array.length) {
-            counter = 0;
-        }
-
     }
 
     public void display() {

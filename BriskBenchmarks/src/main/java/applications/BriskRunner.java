@@ -75,6 +75,8 @@ public class BriskRunner extends abstractRunner {
     }
 
     private static double runTopologyLocally(Topology topology, Configuration conf) throws InterruptedException {
+        System.out.println("[DBG] run topology locally");
+
         TopologySubmitter submitter = new TopologySubmitter();
         final_topology = submitter.submitTopology(topology, conf);
         executorThread sinkThread = submitter.getOM().getEM().getSinkThread();
@@ -359,6 +361,8 @@ public class BriskRunner extends abstractRunner {
         }
 
         // Get the topology
+        System.out.println("[DBG] Topology Name is " + topologyName);
+
         Topology topology = app.getTopology(topologyName, config);
         topology.addMachine(p);
 

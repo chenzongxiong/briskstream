@@ -78,7 +78,8 @@ public class MemFileSpout extends AbstractSpout {
         } catch (FileNotFoundException e) {
 
             // s = "/data/DATA/tony/data/".concat(path);
-            s = "/home/zongxiong/briskstream/dataset/wordcount/Skew0.dat";
+            // s = "/home/zongxiong/briskstream/dataset/wordcount/Skew0.dat";
+            s = "/home/zxchen/briskstream/dataset/wordcount/Skew0.dat";
             try {
                 openFile(s);
             } catch (FileNotFoundException e1) {

@@ -17,6 +17,7 @@ import brisk.execution.runtime.tuple.impl.OutputFieldsDeclarer;
 
 import java.util.HashMap;
 
+import applications.bolts.ysb.model.YSBTuple;
 //import static Brisk.utils.Utils.printAddresses;
 
 // public class DeserializeBolt extends BaseOperator {
@@ -49,12 +50,13 @@ public class DeserializeBolt extends splitBolt {
 
     @Override
     public Fields getDefaultFields() {
-        return new Fields(Field.WORD);
+        System.out.println("[DBG] DeserializeBolt get Default Fields");
+        return new Fields("campaign_id");
     }
 
     @Override
     public void execute(Tuple in) throws InterruptedException {
-        System.out.println("[DBG] Execute DeserializeBolt");
+        // System.out.println("[DBG] Execute DeserializeBolt Tuple");
 //		String value_list = in.getString(0);
 //		String[] split = value_list.split(",");
 //		for (String word : split) {
@@ -74,6 +76,28 @@ public class DeserializeBolt extends splitBolt {
         // }
     }
 
+    @Override
+    public void execute(TransferTuple in) throws InterruptedException {
+        int bound = in.length;
+        // System.out.println("[DBG] Execute DeserializeBolt TransferTuple length: " + bound);
+        for (int i = 0; i < bound; i++) {
+            char[] raw = in.getCharArray(0, i);
+            // char[] emit = this.parse(raw);
+            // for (int j = 0; j < 78; j ++) {
+            //     char ch = raw[j];
+            //     String hex = String.format("%02x", (byte)ch);
+            //     System.out.print(hex + " ");
+            // }
+
+            // System.out.println();
+            collector.emit(0, new YSBTuple(raw));
+        }
+    }
+
+    private char[] parse(char [] rawTuple) {
+
+        return rawTuple;
+    }
 //     public void execute(TransferTuple in) throws InterruptedException {
 // //		final long bid = in.getBID();
 //         // int bound = in.length;
@@ -130,7 +154,8 @@ public class DeserializeBolt extends splitBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("user_id", "page_id", "ad_id", "ad_type", "event_type", "event_time", "ip_address"));
+        // declarer.declare(new Fields("user_id", "page_id", "ad_id", "ad_type", "event_type", "event_time", "ip_address"));
+        declarer.declare(new Fields("user_id", "page_id", "campaign_id", "ad_type", "event_type", "event_time", "ip_address"));
     }
 
 }

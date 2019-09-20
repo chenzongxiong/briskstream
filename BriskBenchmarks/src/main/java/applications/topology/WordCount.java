@@ -61,8 +61,8 @@ public class WordCount extends BasicTopology {
             );
 
             builder.setSink(Component.SINK, sink, sinkThreads
-                    , new ShuffleGrouping(Component.COUNTER));
-//                    , new ShuffleGrouping(Component.SPOUT));
+                    // , new ShuffleGrouping(Component.COUNTER));
+                   , new ShuffleGrouping(Component.SPOUT));
 
         } catch (InvalidIDException e) {
             e.printStackTrace();

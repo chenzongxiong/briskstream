@@ -5,6 +5,7 @@ package applications.topology;
 // import applications.bolts.wc.WordCountBolt;
 import applications.bolts.ysb.DeserializeBolt;
 import applications.bolts.ysb.EventFilterBolt;
+import applications.bolts.ysb.EventProjectionBolt;
 import applications.bolts.ysb.YSBMemFileSpout;
 import applications.bolts.ysb.YSBSink;
 // import applications.constants.WordCountConstants;
@@ -44,12 +45,9 @@ public class YSB extends BasicTopology {
     }
 
     public void initialize() {
-        // super.initialize();
-        // sink = loadSink();
+        System.out.println("[DBG] Initialize YSB topology");
         loadSpout();
-        // initilize_parser();
         loadSink();
-
     }
 
     @Override
@@ -80,13 +78,20 @@ public class YSB extends BasicTopology {
 
         try {
             builder.setSpout("ysbSpout", spout, 1);
+            builder.setBolt("ysbDeserializeBolt", new DeserializeBolt(), 1,
+                            new ShuffleGrouping("ysbSpout"));
 
-            builder.setSink("ysbSink", sink, 1);
+            builder.setBolt("ysbEventBolt", new EventFilterBolt(), 1,
+                            // new FieldsGrouping("ysbDeserializeBolt", new Fields("campaign_id")));
+                            new ShuffleGrouping("ysbDeserializeBolt"));
 
-        //     // spout.setFields(new Fields(Field.TEXT));
-        //     // builder.setSpout(Component.SPOUT, spout, 1);
+            builder.setBolt("ysbProjectionBolt", new EventProjectionBolt(), 1,
+                            // new FieldsGrouping("ysbDeserializeBolt", new Fields("campaign_id")));
+                            new ShuffleGrouping("ysbEventBolt"));
 
-        //     // builder.setSpout("ads", kafkaSpout, kafkaPartitions);
+            builder.setSink("ysbSink", sink, 1,
+                            new ShuffleGrouping("ysbProjectionBolt"));
+
         } catch (InvalidIDException e) {
             e.printStackTrace();
         }

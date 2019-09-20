@@ -23,8 +23,8 @@ public class NullSink extends BaseSink {
     public void initialize(int thread_Id, int thisTaskId, ExecutionGraph graph) {
         super.initialize(thread_Id, thisTaskId, graph);
         helper = new stable_sink_helper(LOG
-                , config.getInt("runtimeInSeconds")
-                , config.getString("metrics.output"), config.getDouble("predict"), 0, thread_Id, false);
+                                        , config.getInt("runtimeInSeconds")
+                                        , config.getString("metrics.output"), config.getDouble("predict", 0), 0, thread_Id, false);
     }
 
     @Override

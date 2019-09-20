@@ -31,6 +31,7 @@ public class SequentialScheduler extends InputStreamController {
     public void initialize() {
         super.initialize();
         for (String streamId : keySet) {
+            // System.out.println("[DBG] StreamId: " + streamId);
             LQ.addAll(getRQ().get(streamId).values());
         }
         size = LQ.size();

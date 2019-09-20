@@ -159,6 +159,7 @@ public class ExecutionManager {
             }
         } else if (profile) {
             for (ExecutionNode e : g.getExecutionNodeArrayList()) {
+                LOG.info("e.operator.type: " + e.operator.type);
                 switch (e.operator.type) {
                     case spoutType:
                         thread = launchSpout_SingleCore(e, new TopologyContext(g, plan, e, ThreadMap, HPCMonotor), conf

@@ -270,6 +270,7 @@ public class OutputCollector<T> {
     }
 
     public void emit(long bid, Object values) throws InterruptedException {
+        // System.out.println("call this emit function");
         emit(DEFAULT_STREAM_ID, bid, values);
     }
 

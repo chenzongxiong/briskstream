@@ -232,6 +232,7 @@ public class ExecutionNode implements Serializable {
     }
 
     public void setReceive_queueOfChildren(String streamId) {
+        System.out.println("[DBG] setReceive_queueOfChildren.StreamId " + streamId);
         if (!isLeafNode()) {
 
             final OutputController controller = getController();
@@ -246,7 +247,7 @@ public class ExecutionNode implements Serializable {
                             final Queue queue = this.getController()
                                     .getPartitionController(streamId, op.getId())
                                     .get_queue(downstream_executor.getExecutorID());
-//                        LOG.info("Set queue for downstream executor:" + downstream_executor);
+                            LOG.info("Set queue for downstream executor:" + downstream_executor);
                             downstream_executor.inputStreamController.setReceive_queue(
                                     streamId,
                                     executorID,//executorId refers the upstream of downstream executor...

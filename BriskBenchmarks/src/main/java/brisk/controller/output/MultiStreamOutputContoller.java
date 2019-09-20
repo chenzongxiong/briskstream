@@ -108,6 +108,7 @@ public class MultiStreamOutputContoller extends OutputController {
     @Override
     public void emitOnStream(MetaGroup MetaGroup, String streamId, long bid, Object output) throws InterruptedException {
         PartitionController[] it = collections.get(streamId);
+        // System.out.println("[DBG] emitOnStream in MultiStreamOutputContoller: length: " + it.length);
         for (int i = 0; i < it.length; i++) {
             PartitionController p = it[i];
             p.emit(MetaGroup.get(p.childOP), streamId, bid, output);

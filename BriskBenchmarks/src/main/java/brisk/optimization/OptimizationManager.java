@@ -125,6 +125,7 @@ public class OptimizationManager extends executorThread {
     }
 
     public ExecutionPlan lanuch(Topology topology, Platform p) {
+        System.out.println("[DBG] launch topology on Platform");
         this.topology = topology;
         final String initial_locks = AffinityLock.dumpLocks();
         AffinityLock.reset();
@@ -194,8 +195,8 @@ public class OptimizationManager extends executorThread {
                 //if (!simulation)
                 EM.distributeTasks(conf, executionPlan, latch, false, false, p);
                 //return executionPlan;
-            } else {//produce the optimize plan
-
+            } else {
+                //produce the optimize plan
                 SchedulingPlan schedulingPlan = so.optimize_plan();
                 conf.put("predict", schedulingPlan.getOutput_rate(false) * 1E6);
                 if (conf.getBoolean("routing")) {

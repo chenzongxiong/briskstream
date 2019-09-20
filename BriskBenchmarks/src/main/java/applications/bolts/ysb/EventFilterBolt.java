@@ -104,11 +104,17 @@ public class EventFilterBolt extends splitBolt {
 //				}
 //			}
 
-            char[] value = in.getCharArray(0, i);
-            String[] split = new String(value).split(",");
-            for (String word : split) {
-                collector.emit_nowait(word.toCharArray());
-            }
+            // char[] value = in.getCharArray(0, i);
+            // String[] split = new String(value).split(",");
+            // for (String word : split) {
+            //     collector.emit_nowait(word.toCharArray());
+            // }
+            // for (int i = 0; i < bound; i ++) {
+                YSBTuple tuple = (YSBTuple) in.getValue(0, i);
+                if (tuple.eventType.substring(0, 4).equals("view")) {
+                    collector.emit_nowait(tuple);
+                // }
+                }
         }
     }
 

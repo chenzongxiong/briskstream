@@ -169,7 +169,7 @@ public class ExecutionGraph extends RawExecutionGraph {
 
 
     public void Loading(Configuration conf, Platform p) {
-        LOG.info("Loading statistics");
+        // LOG.info("Loading statistics");
 
         //This will produce a un-closed thread pool. do not use.
 //		getExecutionNodeArrayList().parallelStream().forEach((executionNode) -> {

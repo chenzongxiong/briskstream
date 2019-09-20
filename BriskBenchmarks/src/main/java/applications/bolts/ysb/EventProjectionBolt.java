@@ -83,7 +83,8 @@ public class EventProjectionBolt extends splitBolt {
         int bound = in.length;
         for (int i = 0; i < bound; i++) {
             YSBTuple tuple = (YSBTuple) in.getValue(0, i);
-            System.out.println("tuple.eventType: " + tuple.eventType);
+            // System.out.println("tuple.eventType: " + tuple.eventType);
+            collector.emit_nowait(new YSBOutputTuple(tuple.campaignId, tuple.eventTime));
 //			char[] value_list = in.getCharArray(0, i);
 //			int index = 0;
 //			int length = value_list.length;
@@ -97,11 +98,12 @@ public class EventProjectionBolt extends splitBolt {
 //				}
 //			}
 
-            char[] value = in.getCharArray(0, i);
-            String[] split = new String(value).split(",");
-            for (String word : split) {
-                collector.emit_nowait(word.toCharArray());
-            }
+        //     char[] value = in.getCharArray(0, i);
+        //     String[] split = new String(value).split(",");
+        //     for (String word : split) {
+        //         collector.emit_nowait(word.toCharArray());
+        //     }
+// }
         }
     }
 

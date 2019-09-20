@@ -1,0 +1,16 @@
+	ysbSpout         	0        	Infinity      	Infinity      	Infinity           	Infinity           	0.0000             	0.0000             
+	ysbDeserializeBolt,1,default)	0        	Infinity      	Infinity      	Infinity           	Infinity           	0.0000             	0.0000             
+	ysbEventBolt,1,default)	0        	Infinity      	Infinity      	Infinity           	Infinity           	0.0000             	0.0000             
+	ysbProjectionBolt,1,default)	0        	Infinity      	Infinity      	Infinity           	Infinity           	0.0000             	0.0000             
+	ysbSink,1,default)	0        	Infinity      	Infinity      	Infinity           	Infinity           	0.0000             	0.0000             
+	Virtual          	0        	Infinity      	Infinity      	Infinity           	Infinity           	0.0000             	0.0000             
+======Constraints information=====
+
+================Constraints relax:==================
+ CPU relax of:1.0	, Memory relax of:1.0	, QPI relax of:1.0	, cores relax: 0
+
+total demand: 0.0	 available:7.199999999999999		idle CPU resource on socket:	0	is:	100.00%
+total demand: 0.0	 available:58.308270489600005		idle Bandwidth resource on socket:	0	is:	100.00%
+
+total demand: 5.0	 available:7.199999999999999		idle cores on socket:	0	is:	0.00%
+communication_cycles_demand: 0.0		 from socket:	0	to socket:0

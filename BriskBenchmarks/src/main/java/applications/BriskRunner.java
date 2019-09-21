@@ -155,6 +155,10 @@ public class BriskRunner extends abstractRunner {
                 case 2:
                     this.p = new applications.HP_Machine();
                     break;
+            case 10:
+                System.out.println("[DBG] Use Cloud-40 machine to do benchmark");
+                this.p = new applications.Cloud40_Machine();
+                break;
                 default:
                     this.p = new applications.RTM_Machine();
             }

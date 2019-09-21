@@ -75,21 +75,24 @@ public class YSB extends BasicTopology {
 
     @Override
     public Topology buildTopology() {
-
+        int parallelism = 44/4;
         try {
             builder.setSpout("ysbSpout", spout, 1);
-            builder.setBolt("ysbDeserializeBolt", new DeserializeBolt(), 1,
+            builder.setBolt("ysbDeserializeBolt", new DeserializeBolt(), parallelism,
                             new ShuffleGrouping("ysbSpout"));
 
-            builder.setBolt("ysbEventBolt", new EventFilterBolt(), 1,
+            builder.setBolt("ysbEventBolt", new EventFilterBolt(), parallelism,
                             // new FieldsGrouping("ysbDeserializeBolt", new Fields("campaign_id")));
                             new ShuffleGrouping("ysbDeserializeBolt"));
 
-            builder.setBolt("ysbProjectionBolt", new EventProjectionBolt(), 1,
+            builder.setBolt("ysbProjectionBolt", new EventProjectionBolt(), parallelism,
                             // new FieldsGrouping("ysbDeserializeBolt", new Fields("campaign_id")));
                             new ShuffleGrouping("ysbEventBolt"));
 
-            builder.setSink("ysbSink", sink, 1,
+            // builder.setSink("ysbSink", sink, 1,
+            //                 new ShuffleGrouping("ysbProjectionBolt"));
+
+            builder.setSink("ysbSink", sink, parallelism,
                             new ShuffleGrouping("ysbProjectionBolt"));
 
         } catch (InvalidIDException e) {

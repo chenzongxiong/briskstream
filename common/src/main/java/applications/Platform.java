@@ -201,8 +201,67 @@ public class Platform implements Serializable {
                     node_2,
                     node_3
             };
-        } else {//my MAC..
+        } else if (machine == 10) {
+            // Cloud-40
+            Integer[] no_0 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
+            node_0 = new ArrayList<>(Arrays.asList(no_0));
+            Integer[] no_1 = {12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47};
+            ArrayList<Integer> node_1 = new ArrayList<>(Arrays.asList(no_1));
+            return new ArrayList[]{
+                node_0,
+                node_1
+            };
+// numa[0][0]=0
+// numa[0][1]=1
+// numa[0][2]=2
+// numa[0][3]=3
+// numa[0][4]=4
+// numa[0][5]=5
+// numa[0][6]=6
+// numa[0][7]=7
+// numa[0][8]=8
+// numa[0][9]=9
+// numa[0][10]=10
+// numa[0][11]=11
+// numa[0][12]=24
+// numa[0][13]=25
+// numa[0][14]=26
+// numa[0][15]=27
+// numa[0][16]=28
+// numa[0][17]=29
+// numa[0][18]=30
+// numa[0][19]=31
+// numa[0][20]=32
+// numa[0][21]=33
+// numa[0][22]=34
+// numa[0][23]=35
+// numa[1][0]=12
+// numa[1][1]=13
+// numa[1][2]=14
+// numa[1][3]=15
+// numa[1][4]=16
+// numa[1][5]=17
+// numa[1][6]=18
+// numa[1][7]=19
+// numa[1][8]=20
+// numa[1][9]=21
+// numa[1][10]=22
+// numa[1][11]=23
+// numa[1][12]=36
+// numa[1][13]=37
+// numa[1][14]=38
+// numa[1][15]=39
+// numa[1][16]=40
+// numa[1][17]=41
+// numa[1][18]=42
+// numa[1][19]=43
+// numa[1][20]=44
+// numa[1][21]=45
+// numa[1][22]=46
+// numa[1][23]=47
 
+
+        } else {//my MAC..
             Integer[] no_0 = {0, 1, 2, 3, 4, 5};//
             node_0 = new ArrayList<>(Arrays.asList(no_0));
 

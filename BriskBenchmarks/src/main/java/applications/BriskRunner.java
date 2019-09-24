@@ -54,6 +54,8 @@ public class BriskRunner extends abstractRunner {
 
         // add YSB
         driver.addApp("YSB", YSB.class);
+        // add nexmark
+        driver.addApp("Nexmark", Nexmark.class);
     }
 
     public static void main(String[] args) {
@@ -344,6 +346,10 @@ public class BriskRunner extends abstractRunner {
                 break;
             }
 
+            case "Nexmark": {
+                System.out.println("[DBG] Run Nexmark app");
+                break;
+            }
             }
             Constants.default_sourceRate = config.getInt("targetHz");
         } else {

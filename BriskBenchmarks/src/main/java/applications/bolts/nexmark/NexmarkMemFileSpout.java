@@ -64,7 +64,7 @@ public class NexmarkMemFileSpout extends AbstractSpout {
     @Override
     public void initialize(int thread_Id, int thisTaskId, ExecutionGraph graph) {
         LOG.info("Spout initialize is being called");
-        this.tupleToRead = 10000;
+        this.tupleToRead = 20000000;
         this.tupleSize = 32;
         this.currentIndex = 0;
 

@@ -20,11 +20,11 @@ import java.util.HashMap;
 import applications.bolts.nexmark.NexmarkTuple;
 
 
-public class NexmarkParser extends splitBolt {
-    private static final Logger LOG = LoggerFactory.getLogger(NexmarkParser.class);
+public class NexmarkFilter extends splitBolt {
+    private static final Logger LOG = LoggerFactory.getLogger(NexmarkFilter.class);
     private static final long serialVersionUID = 8089145995668583749L;
 
-    public NexmarkParser () {
+    public NexmarkFilter () {
         super(LOG, new HashMap<>());
         this.output_selectivity.put(BaseConstants.BaseStream.DEFAULT, 10.0);
         OsUtils.configLOG(LOG);
@@ -49,13 +49,13 @@ public class NexmarkParser extends splitBolt {
 
     @Override
     public Fields getDefaultFields() {
-        System.out.println("[DBG] NexmarkParser get Default Fields");
+        System.out.println("[DBG] NexmarkFilter get Default Fields");
         return new Fields("campaign_id");
     }
 
     @Override
     public void execute(Tuple in) throws InterruptedException {
-        // System.out.println("[DBG] Execute NexmarkParser Tuple");
+        // System.out.println("[DBG] Execute NexmarkFilter Tuple");
 //		String value_list = in.getString(0);
 //		String[] split = value_list.split(",");
 //		for (String word : split) {
@@ -79,16 +79,26 @@ public class NexmarkParser extends splitBolt {
     public void execute(TransferTuple in) throws InterruptedException {
         int bound = in.length;
         for (int i = 0; i < bound; i++) {
-            char[] raw = in.getCharArray(0, i);
-            collector.emit(0, new NexmarkTuple(raw));
+            NexmarkTuple tuple = (NexmarkTuple) in.getValue(0, i);
+            if (tuple.auction == 1007L ||
+                tuple.auction == 2001L ||
+                tuple.auction == 2019L ||
+                tuple.auction == 2087L) {
+                collector.emit(0, tuple);
+            }
         }
     }
 
     public void profile_execute(TransferTuple in) throws InterruptedException {
         int bound = in.length;
         for (int i = 0; i < bound; i++) {
-            char[] raw = in.getCharArray(0, i);
-            collector.emit_nowait(new NexmarkTuple(raw));
+            NexmarkTuple tuple = (NexmarkTuple) in.getValue(0, i);
+            if (tuple.auction == 1007L ||
+                tuple.auction == 2001L ||
+                tuple.auction == 2019L ||
+                tuple.auction == 2087L) {
+                collector.emit(0, tuple);
+            }
         }
     }
 

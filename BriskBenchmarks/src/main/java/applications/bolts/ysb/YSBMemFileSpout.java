@@ -68,7 +68,7 @@ public class YSBMemFileSpout extends AbstractSpout {
     @Override
     public void initialize(int thread_Id, int thisTaskId, ExecutionGraph graph) {
         LOG.info("Spout initialize is being called");
-        this.tupleToRead = 100;
+        this.tupleToRead = 1000000;
         this.tupleSize = 78;
         this.currentIndex = 0;
 

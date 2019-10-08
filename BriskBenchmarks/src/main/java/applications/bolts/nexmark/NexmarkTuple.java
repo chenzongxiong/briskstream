@@ -10,8 +10,8 @@ import applications.datatype.util.ISegmentIdentifier;
 
 public class NexmarkTuple extends StreamValues {
     private static final long serialVersionUID = 2L;
-    private static ByteBuffer bufferHelper;
-    private static byte[] buffer = new byte[32];
+
+    // private byte[] buffer = new byte[32];
 
     public long auction;
     public long bidder;
@@ -23,9 +23,11 @@ public class NexmarkTuple extends StreamValues {
     }
 
     public NexmarkTuple(char[] string) {
+        ByteBuffer bufferHelper;
+        byte[] buffer = new byte[32];
         for (int i = 0; i < 32; i ++) {
             // System.out.print(String.format("%02x", (byte)string[i]) + " ");
-            buffer[i] = (byte) string[i];
+            buffer[i] = (byte) string[i];;
         }
         // System.out.println();
 

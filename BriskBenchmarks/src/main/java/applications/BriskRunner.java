@@ -88,7 +88,7 @@ public class BriskRunner extends abstractRunner {
 
         long time_elapsed = (long) ((System.currentTimeMillis() - start) / 1E3 / 60);//in mins
 
-        if (time_elapsed > 20) {
+        if (time_elapsed > 60) {
             LOG.info("Program error, exist...");
             System.exit(-1);
         }

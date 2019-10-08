@@ -75,9 +75,9 @@ public class YSB extends BasicTopology {
 
     @Override
     public Topology buildTopology() {
-        int parallelism = 44/4;
+        int parallelism = 8;
         try {
-            builder.setSpout("ysbSpout", spout, 1);
+            builder.setSpout("ysbSpout", spout, 4);
             builder.setBolt("ysbDeserializeBolt", new DeserializeBolt(), parallelism,
                             new ShuffleGrouping("ysbSpout"));
 

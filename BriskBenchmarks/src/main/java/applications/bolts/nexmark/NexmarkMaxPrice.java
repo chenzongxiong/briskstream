@@ -14,17 +14,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import brisk.components.operators.api.BaseOperator;
 import brisk.execution.runtime.tuple.impl.OutputFieldsDeclarer;
-
 import java.util.HashMap;
 
+
 import applications.bolts.nexmark.NexmarkTuple;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-
-public class NexmarkParser extends splitBolt {
-    private static final Logger LOG = LoggerFactory.getLogger(NexmarkParser.class);
+public class NexmarkMaxPrice extends splitBolt {
+    private static final Logger LOG = LoggerFactory.getLogger(NexmarkMaxPrice.class);
     private static final long serialVersionUID = 8089145995668583749L;
 
-    public NexmarkParser () {
+    private final Map<Integer, Long> counts = new HashMap<>();//what if memory is not enough to hold counts?
+    private long maxPrice = -1;
+
+    public NexmarkMaxPrice () {
         super(LOG, new HashMap<>());
         this.output_selectivity.put(BaseConstants.BaseStream.DEFAULT, 10.0);
         OsUtils.configLOG(LOG);
@@ -49,52 +54,43 @@ public class NexmarkParser extends splitBolt {
 
     @Override
     public Fields getDefaultFields() {
-        System.out.println("[DBG] NexmarkParser get Default Fields");
-        return new Fields("campaign_id");
+        return new Fields(Field.WORD);
     }
 
     @Override
     public void execute(Tuple in) throws InterruptedException {
-        // System.out.println("[DBG] Execute NexmarkParser Tuple");
-//		String value_list = in.getString(0);
-//		String[] split = value_list.split(",");
-//		for (String word : split) {
-//			collector.force_emit(word);
-//		}
-        // char[] value = in.getCharArray(0);
-        // int index = 0;
-        // int length = value.length;
-        // for (int c = 0; c < length; c++) {
-        //     if (value[c] == ',' || c == length - 1) {//double measure_end.
-        //         int len = c - index;
-        //         char[] word = new char[len];
-        //         System.arraycopy(value, index, word, 0, len);
-        //         collector.force_emit(word);
-        //         index = c + 1;
-        //     }
-        // }
     }
 
-    @Override
     public void execute(TransferTuple in) throws InterruptedException {
         int bound = in.length;
-        for (int i = 0; i < bound; i++) {
-            char[] raw = in.getCharArray(0, i);
-            collector.emit(0, new NexmarkTuple(raw));
+        // System.out.println("[DBG] Execute NexmarkMaxPrice, bound: " + bound);
+        for (int i = 0; i < bound; i ++) {
+            NexmarkTuple tuple = (NexmarkTuple) in.getValue(0, i);
+            // int key = (long)(Arrays.hashCode(tuple.auction.toCharArray()));
+            // int key = 0;
+            // long v = counts.getOrDefault(key, 0L) + 1;
+
+            // counts.put(key, v);
+            // System.out.println("tuple.eventType: " + tuple.eventType + ", count: " + v + ", key: " + key);
+            // System.out.println("count: " + v + ", key: " + key);
+            if (maxPrice < tuple.price) {
+                maxPrice = tuple.price;
+            }
+            collector.emit(4, tuple);
         }
     }
 
     public void profile_execute(TransferTuple in) throws InterruptedException {
         int bound = in.length;
         for (int i = 0; i < bound; i++) {
-            char[] raw = in.getCharArray(0, i);
-            collector.emit_nowait(new NexmarkTuple(raw));
+            NexmarkTuple tuple = (NexmarkTuple) in.getValue(0, i);
+            collector.emit_nowait(tuple);
         }
     }
 
+
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("auction", "bidder", "price", "dateTime"));
+        declarer.declare(new Fields("campaign_id", "event_time"));
     }
-
 }

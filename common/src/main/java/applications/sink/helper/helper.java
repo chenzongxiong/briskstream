@@ -60,7 +60,7 @@ public abstract class helper {
         measure_times = (int) (duration / measure_interval);
         warm_up = 2 * 1E9;//warm up 1 seconds.
         // this.metric_path = metric_path;
-        this.metric_path = "/home/zxchen/briskstream/metric/wc";
+        this.metric_path = "/home/zxchen/briskstream/metric/nexmark";
         this.throughput_path = metric_path + OsUtils.OS_wrapper("throughput.txt");
         this.sink_path = metric_path + OsUtils.OS_wrapper("sink_threadId.txt");
         System.out.println("this.throughput.path: " + this.throughput_path + ", sink_path: " + this.sink_path);
